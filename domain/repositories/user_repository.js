@@ -80,4 +80,20 @@ async function updateOne(userId, updateData) {
   }
 }
 
-module.exports = { findOneByUserId, findOneByEmail, findAll, create, updateOne };
+async function deleteOne(userId) {
+  try {
+    const deletedUser = await User.findOneAndDelete({ user_id: userId });
+
+    if (!deletedUser) {
+      throw new Error('User not found');
+    }
+
+    return deletedUser;
+  
+  } catch (error) {
+    console.error('Error deleting user:', error);
+    throw error;
+  }
+}
+
+module.exports = { findOneByUserId, findOneByEmail, findAll, create, updateOne, deleteOne };

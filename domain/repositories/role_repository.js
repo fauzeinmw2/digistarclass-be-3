@@ -51,6 +51,40 @@ async function findAll() {
   }
 }
 
+async function updateOne(roleId, updateData) {
+  try {
+    const existingRole = await Role.findOne({ role_id: roleId });
 
+    if (!existingRole) {
+      throw new Error('Role not found');
+    }
 
-module.exports = { create, getOneByRoleId, getOneByName, findAll };
+    delete updateData._id;
+    Object.assign(existingRole, updateData);
+    existingRole.updated_at = new Date();
+    const updatedRole = await existingRole.save();
+  
+    return updatedRole;
+    
+  } catch (error) {
+    console.error('Error updating role:', error);
+    throw error;
+  }
+}
+
+async function deleteOne(roleId) {
+  try {
+    const deletedRole = await Role.findOneAndDelete({ role_id: roleId });
+    
+    if (!deletedRole) {
+      throw new Error('Role not found');
+    }
+
+    return deletedRole;
+  } catch (error) {
+    console.error('Error deleting role:', error);
+    throw error;
+  }
+}
+
+module.exports = { create, getOneByRoleId, getOneByName, findAll, updateOne, deleteOne };

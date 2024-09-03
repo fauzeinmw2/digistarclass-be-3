@@ -4,7 +4,14 @@ const orderUsecase = require('../domain/usecases/order_usecase');
 async function create(req, res) {
   try {
     const orderData = req.body;
-    const createdOrder = await orderUsecase.create(orderData);
+    const userId = req.user.userId; 
+
+    const orderDataWithUser = {
+      ...orderData,
+      created_by: userId
+    };
+
+    const createdOrder = await orderUsecase.create(orderDataWithUser);
     res.status(201).json({ message: "Order created successfully", orderId: createdOrder.order_id });
   } catch (error) {
     console.error(error);
@@ -38,4 +45,34 @@ async function getOneByOrderId(req, res) {
   }
 }
 
-module.exports = { create, getList, getOneByOrderId };
+async function updateOne(req, res){
+  console.log("handler")
+  try {
+    const orderId = req.params.id;
+    const updateData = req.body;
+    const updatedOrder = await orderUsecase.updateOne({ order_id: orderId, ...updateData });
+    res.json({ message: "Order updated successfully", order: updatedOrder });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error', message: error.message });
+  }
+}
+
+async function deleteOne(req, res) {
+  try {
+    const orderId = req.params.id;
+    const deletedOrder = await orderUsecase.deleteOne(orderId);
+
+    if (!deletedOrder) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+
+    res.json({ message: "Order deleted successfully" });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error', message: error.message });
+  }
+}
+
+module.exports = { create, getList, getOneByOrderId, updateOne, deleteOne };

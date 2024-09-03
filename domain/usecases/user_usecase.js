@@ -172,4 +172,20 @@ async function updateOne(updateData) {
   }
 }
 
-module.exports = {getOneByUserId, getOneByEmail, getList, register, login, updateOne};
+async function deleteOne(userId) {
+  try {
+    const deletedUser = await repository.deleteOne(userId);
+
+    if (!deletedUser) {
+      throw new Error('User not found');
+    }
+
+    return deletedUser;
+
+  } catch (error) {
+    console.error('Error deleting user:', error);
+    throw error;
+  }
+}
+
+module.exports = {getOneByUserId, getOneByEmail, getList, register, login, updateOne, deleteOne};

@@ -27,4 +27,50 @@ async function getList(req, res) {
   }
 }
 
-module.exports = { create, getList };
+async function getById(req, res) {
+  try {
+    const roleId = req.params.id;
+    const role = await roleUsecase.getById(roleId);
+
+    if (!role) {
+      return res.status(404).json({ message: "Role not found" });
+    }
+
+    res.json(role);
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error', message: error.message });
+  }
+}
+
+async function updateOne(req, res){
+  try {
+    const roleId = req.params.id;
+    const updateData = req.body;
+    const updatedRole = await roleUsecase.updateOne({ role_id: roleId, ...updateData });
+    res.json({ message: "Role updated successfully", user: updatedRole });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error', message: error.message });
+  }
+}
+
+async function deleteOne(req, res) {
+  try {
+    const roleId = req.params.id;
+    const deletedRole = await roleUsecase.deleteOne(roleId);
+
+    if (!deletedRole) {
+      return res.status(404).json({ message: "Role not found" });
+    }
+
+    res.json({ message: "Role deleted successfully" });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error', message: error.message });
+  }
+}
+
+module.exports = { create, getList, getById, updateOne, deleteOne };

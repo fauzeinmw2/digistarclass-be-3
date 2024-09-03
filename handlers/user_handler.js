@@ -73,4 +73,16 @@ async function updateOne(req, res) {
   }
 }
 
-module.exports = { getOneByUserId, getOneByEmail, getList, register, login, updateOne };
+async function deleteOne(req, res) {
+  try {
+    const userId = req.params.id;
+    const deletedUser = await userUsecase.deleteOne(userId);
+    res.json({ message: "User deleted successfully"});
+    
+  } catch (error) {
+    console.error('Error deleting user:', error);
+    res.status(500).json({ error: 'Internal Server Error', message: error.message });
+  }
+}
+
+module.exports = { getOneByUserId, getOneByEmail, getList, register, login, updateOne, deleteOne };
